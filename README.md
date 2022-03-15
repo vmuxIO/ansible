@@ -22,3 +22,6 @@ bootstrapping it should be as easy as:
 ```bash
 ansible-playbook bootstrap.yml
 ```
+
+## License
+This code is distributed under [MIT license](LICENSE).
