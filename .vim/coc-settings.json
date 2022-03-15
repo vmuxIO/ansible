@@ -1,18 +1,26 @@
 {
   "cSpell.words": [
+    "bulleye",
+    "chdir",
+    "distro",
+    "distros",
     "fping",
     "hdparm",
     "ioping",
+    "ioregionfd",
     "iotop",
     "iperf",
+    "libelf",
     "lshw",
     "minicom",
     "ncdu",
     "neovim",
     "netcat",
     "nmap",
+    "olddefconfig",
     "smartmontools",
     "tcpdump",
-    "tcptrack"
+    "tcptrack",
+    "vcpus"
   ]
 }
