@@ -9,6 +9,7 @@
   apt:
     update_cache: 'yes'
     upgrade: 'dist'
+  register: upgrade
 
 - name: install basic packages
   apt:
@@ -45,3 +46,8 @@
       - netcat
       - tcpdump
     state: present
+  register: installation
+
+- name: reboot after upgrade or package installation
+  reboot:
+  when: upgrade.changed or installation.changed
