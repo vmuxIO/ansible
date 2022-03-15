@@ -1,18 +1,35 @@
 {
   "cSpell.words": [
+    "MAKEFLAGS",
+    "bulleye",
+    "chdir",
+    "distro",
+    "distros",
     "fping",
     "hdparm",
     "ioping",
+    "ioregion",
+    "ioregionfd",
     "iotop",
     "iperf",
+    "irqbypass",
+    "isreg",
+    "kallsyms",
+    "libelf",
+    "lineinfile",
     "lshw",
     "minicom",
     "ncdu",
+    "ncpus",
     "neovim",
     "netcat",
     "nmap",
+    "olddefconfig",
     "smartmontools",
     "tcpdump",
-    "tcptrack"
+    "tcptrack",
+    "uefi",
+    "vcpus",
+    "virt"
   ]
 }
