@@ -27,7 +27,6 @@
       - fio
       - vim
       - neovim
-      - git
       - tmux
       - tree
       - rsync
