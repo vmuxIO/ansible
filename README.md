@@ -7,6 +7,7 @@ There are currently three roles:
 - packages: Updates and installs some useful packages
 - linux: compiles and installs the needed kernel
 - qemu: compiles our qemu repo
+
 The linux and qemu roles might become mature enough at some point to justify
 an own repo.
 
