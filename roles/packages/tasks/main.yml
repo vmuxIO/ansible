@@ -1,1 +1,48 @@
 ---
+# tasks file for packages
+
+- name: manage package facts
+  package_facts:
+    manager: auto
+
+- name: upgrade system
+  apt:
+    update_cache: 'yes'
+    upgrade: 'dist'
+
+- name: install basic packages
+  apt:
+    pkg:
+      - htop
+      - locate
+      - mtr
+      - iperf
+      - fping
+      - stress
+      - stress-ng
+      - hdparm
+      - smartmontools
+      - ioping
+      - fping
+      - fio
+      - vim
+      - neovim
+      - git
+      - tmux
+      - tree
+      - rsync
+      - ncdu
+      - wipe
+      - iotop
+      - minicom
+      - lshw
+      - curl
+      - git
+      - acl # needed to become an unprivileged user with ansible
+      - lsof
+      - tcptrack
+      - unzip
+      - nmap
+      - netcat
+      - tcpdump
+    state: present
