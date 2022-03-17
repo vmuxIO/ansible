@@ -1,1 +1,110 @@
 ---
+
+- name: install packages needed for compilation
+  apt:
+    pkg:
+      - build-essential
+      - libelf-dev 
+      - libssl-dev
+      - bc
+      - dwarves
+      - flex
+      - bison
+    state: present
+    update_cache: 'yes'
+  register: install_packages
+
+- name: reboot after package installation
+  reboot:
+  when: install_packages.changed
+
+- name: clone linux kernel with ioregionfd feature
+  git:
+    repo: https://github.com/Mic92/linux.git
+    dest: "{{ linux_dir }}"
+    version: peter/5.12.14-v0
+    clone: yes
+    update: no
+  become_user: "{{ user }}"
+
+- name: check if .config exists
+  stat:
+    path: "{{ linux_dir }}/.config"
+  register: config
+
+- name: copy current kernel config
+  copy:
+    src: "/boot/config-{{ ansible_kernel }}"
+    dest: "{{ linux_dir }}/.config"
+    remote_src: yes
+    force: no
+  become_user: "{{ user }}"
+  when: not (config.stat.isreg is defined and config.stat.isreg)
+
+- name: build kernel config from old one
+  make:
+    chdir: "{{ linux_dir }}"
+    target: olddefconfig
+  become_user: "{{ user }}"
+  register: make_olddefconfig
+  changed_when: '"No change to .config" not in make_olddefconfig.stdout'
+
+- name: remove debian uefi certs from config
+  lineinfile:
+    path: "{{ linux_dir }}/.config"
+    regexp: "^CONFIG_SYSTEM_TRUSTED_KEYS="
+    line: "CONFIG_SYSTEM_TRUSTED_KEYS=\"\""
+
+- name: patch ioregion.c to avoid compiler warnings
+  patch:
+    src: ioregion.c.patch
+    dest: "{{ linux_dir }}/virt/kvm/ioregion.c"
+
+- name: build the kernel
+  make:
+    chdir: "{{ linux_dir }}"
+  environment: # forget about params, this module seems to be buggy
+    MAKEFLAGS: "-j {{ ansible_processor_vcpus }}"
+  become_user: "{{ user }}"
+  register: make
+  changed_when: '"BUILD   arch/x86/boot/bzImage" in make.stdout'
+
+- name: check if last module is installed
+  stat:
+    path: /lib/modules/5.12.14+/build/virt/lib/irqbypass.ko
+  register: last_module
+
+- name: install kernel modules
+  make:
+    chdir: "{{ linux_dir }}"
+    target: "modules_install"
+  environment: # forget about params, this module seems to be buggy
+    MAKEFLAGS: "-j {{ ansible_processor_vcpus }}"
+  when: make.changed or not (last_module.stat.isreg is defined and last_module.stat.isreg)
+
+- name: check if kernel is installed
+  stat:
+    path: /boot/vmlinuz-5.12.14+
+  register: kernel
+
+- name: install the kernel
+  make:
+    chdir: "{{ linux_dir }}"
+    target: "install"
+  environment: # forget about params, this module seems to be buggy
+    MAKEFLAGS: "-j {{ ansible_processor_vcpus }}"
+  when: make.changed or not (kernel.stat.isreg is defined and kernel.stat.isreg)
+  register: make_install
+
+- name: reboot after kernel installation
+  reboot:
+  when: make_install.changed
+
+- name: get all exported kernel symbols
+  shell: cat /proc/kallsyms
+  register: cat_kallsyms
+  changed_when: false
+
+- name: check that ioregion symbols are there
+  assert:
+    that: "'ioregion' in cat_kallsyms.stdout"
