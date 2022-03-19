@@ -1,1 +1,64 @@
 ---
+
+- name: install qemu's dependencies and tools for compilation
+  apt:
+    pkg:
+      - git
+      - ninja-build
+      - build-essential
+      - libglib2.0-dev
+      - libfdt-dev
+      - libpixman-1-dev
+      - zlib1g-dev
+    state: present
+    update_cache: 'yes'
+  register: install_packages
+
+- name: reboot after package installation
+  reboot:
+  when: install_packages.changed
+
+- name: clone our qemu repository
+  git:
+    repo: https://github.com/vmuxIO/qemu.git
+    dest: "{{ qemu_dir }}"
+    version: ioregfd-vdev
+    clone: yes
+    # TODO we might also want to to pull our changes
+    update: no
+  become_user: "{{ user }}"
+
+- name: create build folder
+  file:
+    path: "{{ qemu_build_dir }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: "0755"
+
+- name: check if config.status exists
+  stat:
+    path: "{{ qemu_build_dir }}/config.status"
+  register: config_status
+
+- name: configure qemu
+  shell:
+    chdir: "{{ qemu_build_dir }}"
+    cmd: "{{ qemu_dir }}/configure --target-list=x86_64-softmmu --enable-debug"
+  become_user: "{{ user }}"
+  when: not (config_status.stat.isreg is defined and config_status.stat.isreg)
+  # TODO Maybe it would be better to check if the hash of config.status is
+  # different from before and use this a changed when condition.
+  # Or we even check if the exec line in this file matches our command.
+
+- name: build the qemu
+  make:
+    chdir: "{{ qemu_build_dir }}"
+  environment: # forget about params, this module seems to be buggy
+    MAKEFLAGS: "-j {{ ansible_processor_vcpus }}"
+  become_user: "{{ user }}"
+  register: make
+  changed_when: '" Compiling " in make.stdout or " Linking " in make.stdout'
+
+# TODO A final check if qemu actually runs would be good.
+# Building an running its test suite would be prudent to.
