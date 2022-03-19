@@ -1,0 +1,2 @@
+qemu_dir: "{{ home }}/qemu"
+qemu_build_dir: "{{ home }}/qemu_build"
