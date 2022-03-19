@@ -5,7 +5,7 @@
     pkg:
       - git
       - build-essential
-      - libelf-dev 
+      - libelf-dev
       - libssl-dev
       - bc
       - dwarves
