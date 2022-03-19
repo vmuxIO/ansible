@@ -3,6 +3,7 @@
 - name: install packages needed for compilation
   apt:
     pkg:
+      - git
       - build-essential
       - libelf-dev 
       - libssl-dev
