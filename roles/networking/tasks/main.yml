@@ -1,1 +1,14 @@
 ---
+
+- name: copy network configuration file
+  template:
+    src: interfaces
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  register: copy_network_config
+
+- name: restart to apply network configuration
+  reboot:
+  when: copy_network_config.changed
