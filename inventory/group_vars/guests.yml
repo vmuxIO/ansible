@@ -1,2 +1,2 @@
-user: debian
+user: admin
 home: "/home/{{ user }}"
