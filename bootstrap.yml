@@ -5,3 +5,4 @@
     - {role: 'packages', tags: 'packages'}
     - {role: 'linux', tags: 'linux'}
     - {role: 'qemu', tags: 'qemu'}
+    - {role: 'moongen', tags: 'moongen'}
