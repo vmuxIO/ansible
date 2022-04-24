@@ -8,7 +8,9 @@
   roles:
     - {role: 'linux', tags: 'linux'}
     - {role: 'qemu', tags: 'qemu'}
+    - {role: 'networking', tags: 'networking'}
 
 - hosts: all
   roles:
     - {role: 'moongen', tags: 'moongen'}
+    - {role: 'scripts', tags: 'scripts'}
