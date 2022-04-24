@@ -3,6 +3,12 @@
 - hosts: all
   roles:
     - {role: 'packages', tags: 'packages'}
+
+- hosts: hosts
+  roles:
     - {role: 'linux', tags: 'linux'}
     - {role: 'qemu', tags: 'qemu'}
+
+- hosts: all
+  roles:
     - {role: 'moongen', tags: 'moongen'}
