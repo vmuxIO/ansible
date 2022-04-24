@@ -2,10 +2,15 @@
 
 Ansible scripts for setting up a test system for Qemu development.
 
+## Playbooks
+There are the following playbooks:
+- bootstrap: does the initial setup on the host and guest machines
+
 ## Role Structure
-There are currently three roles:
-- packages: Updates and installs some useful packages
+There are the following roles:
+- packages: updates and installs some useful packages
 - linux: compiles and installs the needed kernel
+- moongen: compiles moongen
 - qemu: compiles our qemu repo
 
 The linux and qemu roles might become mature enough at some point to justify
