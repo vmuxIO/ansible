@@ -44,7 +44,7 @@
 - name: configure qemu
   shell:
     chdir: "{{ qemu_build_dir }}"
-    cmd: "{{ qemu_dir }}/configure --target-list=x86_64-softmmu --enable-debug"
+    cmd: "{{ qemu_dir }}/configure --target-list=x86_64-softmmu" # --enable-debug"
   become_user: "{{ user }}"
   when: not (config_status.stat.isreg is defined and config_status.stat.isreg)
   # TODO Maybe it would be better to check if the hash of config.status is
