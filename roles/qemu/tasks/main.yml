@@ -22,7 +22,7 @@
   git:
     repo: https://github.com/vmuxIO/qemu.git
     dest: "{{ qemu_dir }}"
-    version: ioregfd-vdev
+    version: ioregionfd
     clone: yes
     # TODO we might also want to to pull our changes
     update: no
