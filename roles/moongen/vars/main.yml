@@ -1,0 +1,2 @@
+moongen_dir: "{{ home }}/MoonGen"
+moongen_exe: "{{ moongen_dir }}/build/MoonGen"

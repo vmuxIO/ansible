@@ -1,1 +1,51 @@
 ---
+
+- name: install packages needed for compilation
+  apt:
+    pkg:
+      - git
+      - build-essential
+      - cmake
+      - pciutils
+      - libnuma-dev
+    state: present
+    update_cache: 'yes'
+  register: install_packages
+
+- name: reboot after package installation
+  reboot:
+  when: install_packages.changed
+
+- name: clone MoonGen repository
+  git:
+    repo: https://github.com/vmuxIO/MoonGen.git
+    dest: "{{ moongen_dir }}"
+    update: false
+  become_user: "{{ user }}"
+  register: clone_repo
+
+- name: stat moongen executable
+  stat:
+    path: "{{ moongen_exe }}"
+  register: moongen_executable
+
+- name: delete old moongen executable
+  file:
+    path: "{{ moongen_exe }}" 
+    state: absent
+  when: clone_repo.changed and moongen_executable.stat.exists
+
+- name: run moongen's build script
+  shell:
+    chdir: "{{ moongen_dir }}"
+    cmd: "./build.sh"
+  ignore_errors: yes
+  when: clone_repo.changed or not moongen_executable.stat.exists
+
+- name: check if moongen executable exists
+  block:
+    - stat:
+        path: "{{ moongen_exe }}"
+      register: moongen_executable
+    - assert:
+        that: moongen_executable.stat.isreg
