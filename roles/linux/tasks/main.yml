@@ -21,7 +21,7 @@
 
 - name: clone linux kernel with ioregionfd feature
   git:
-    repo: https://github.com/Mic92/linux.git
+    repo: https://github.com/vmuxIO/linux.git
     dest: "{{ linux_dir }}"
     version: peter/5.12.14-v0
     clone: yes
